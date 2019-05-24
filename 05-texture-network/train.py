@@ -15,8 +15,18 @@ GRAM_LAYERS= ['conv1_1', 'conv1_2', 'conv2_1', 'conv2_2', 'conv3_1', 'conv3_2', 
 image_shape = (1, 224, 224, 3)
 
 '''you need to complete this method'''
-def get_l2_gram_loss_for_layer(noise, source, layer):
+def get_gram_matrix(act):
+    N = act.shape[1]
+    F = act.reshape(N,-1)
+    M = F.shape[1]
+    G = np.dot(F,F.T) / M
+    return G
 
+
+def get_l2_gram_loss_for_layer(noise, source, layer):
+    noise_gram = get_gram_matrix(noise)
+    source_gram = get_gram_matrix(source)
+    return tf.norm(noise_gram-source_gram)
 
 def get_gram_loss(noise, source):
     with tf.name_scope('get_gram_loss'):
